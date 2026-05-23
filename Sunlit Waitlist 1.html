@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Sunlit AI — Join the Waitlist</title>
+  <meta name="description" content="AI Photo Enhancer. Be first to experience Sunlit AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #F5A623;
+      --gold-dim: rgba(245,166,35,0.15);
+      --gold-border: rgba(245,166,35,0.35);
+      --white: #ffffff;
+      --white-40: rgba(255,255,255,0.4);
+      --white-20: rgba(255,255,255,0.2);
+      --white-08: rgba(255,255,255,0.08);
+      --white-05: rgba(255,255,255,0.05);
+      --black: #000000;
+    }
+
+    html {
+      height: 100%;
+      background: var(--black);
+    }
+
+    body {
+      min-height: 100%;
+      min-height: 100dvh;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Background glow */
+    .glow-top {
+      position: fixed;
+      top: -15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(700px, 120vw);
+      height: min(700px, 120vw);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,166,35,0.10) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 3rem 1.5rem 3.5rem;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--gold-dim);
+      border: 0.5px solid var(--gold-border);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    /* Logo */
+    .logo-wrap {
+      margin-bottom: 1.25rem;
+      animation: fadeUp 0.5s 0.05s ease both;
+    }
+
+    .app-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+
+    }
+
+    /* Title */
+    .title-block {
+      text-align: center;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.5s 0.08s ease both;
+    }
+
+    .app-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 12vw, 5.5rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+    }
+
+    .app-name span { color: var(--gold); }
+
+    .app-subtitle {
+      font-size: clamp(11px, 3vw, 14px);
+      font-weight: 400;
+      color: var(--white-40);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    /* Description */
+    .desc {
+      font-size: clamp(14px, 3.5vw, 16px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.48);
+      text-align: center;
+      max-width: 360px;
+      line-height: 1.75;
+      margin: 1rem 0 2rem;
+      animation: fadeUp 0.5s 0.16s ease both;
+      padding: 0 0.5rem;
+    }
+
+    /* Templates scroll container */
+    .templates-outer {
+      width: 100%;
+      /* bleed edge to edge on mobile */
+      margin-left: calc(-1.5rem);
+      width: calc(100% + 3rem);
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 14px 1.5rem 14px;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.5s 0.24s ease both;
+    }
+
+    .templates-outer::-webkit-scrollbar { display: none; }
+
+    .templates {
+      display: flex;
+      gap: 10px;
+      width: max-content;
+      align-items: flex-end;
+      padding-bottom: 2px;
+    }
+
+    .card {
+      width: 130px;
+      height: 210px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+      border: 0.5px solid var(--white-08);
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s;
+    }
+
+    /* Stagger even cards up */
+    .card:nth-child(even) { transform: translateY(-16px); }
+    .card:hover { border-color: var(--gold-border); }
+
+    .card video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.88));
+      padding: 28px 10px 10px;
+    }
+
+    .card-name {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--white);
+      display: block;
+      line-height: 1.3;
+    }
+
+    /* Form */
+    .form-wrap {
+      width: 100%;
+      max-width: 420px;
+      animation: fadeUp 0.5s 0.32s ease both;
+      padding: 0 0.25rem;
+    }
+
+    .email-input {
+      width: 100%;
+      background: var(--white-05);
+      border: 0.5px solid var(--white-20);
+      border-radius: 100px;
+      padding: 0 22px;
+      height: 52px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px; /* 16px prevents iOS zoom */
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .email-input::placeholder { color: rgba(255,255,255,0.28); }
+    .email-input:focus {
+      border-color: rgba(245,166,35,0.55);
+      background: rgba(245,166,35,0.04);
+    }
+    .email-input.error { border-color: rgba(220,60,60,0.7); }
+
+    .join-btn {
+      width: 100%;
+      background: var(--gold);
+      color: #000;
+      border: none;
+      border-radius: 100px;
+      height: 52px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: opacity 0.15s, transform 0.1s;
+      display: block;
+    }
+
+    .join-btn:hover { opacity: 0.85; }
+    .join-btn:active { transform: scale(0.98); }
+    .join-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .error-msg {
+      font-size: 12px;
+      color: rgba(220,80,80,0.9);
+      margin-top: 8px;
+      padding-left: 16px;
+      display: none;
+    }
+
+    /* Success */
+    .success-wrap {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+      animation: fadeUp 0.4s ease both;
+      padding: 0 1rem;
+    }
+
+    .success-icon {
+      width: 54px; height: 54px;
+      background: var(--gold-dim);
+      border: 0.5px solid var(--gold-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .success-wrap h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .success-wrap p {
+      font-size: 14px;
+      color: var(--white-40);
+      font-weight: 300;
+    }
+
+    /* Social proof */
+    .social-proof {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 1.25rem;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      animation: fadeUp 0.5s 0.4s ease both;
+    }
+
+    .avatars { display: flex; }
+
+    .avatar {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--black);
+      background: #3a2800;
+      margin-left: -7px;
+      font-size: 9px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+    }
+
+    .avatars .avatar:first-child { margin-left: 0; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-top"></div>
+
+  <div class="container">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Coming Soon
+    </div>
+
+    <div class="logo-wrap">
+      <img class="app-logo" src="https://res.cloudinary.com/dimvx7yg5/image/upload/v1776682009/sunlit-logo.png_wpb5eb.png" alt="Sunlit AI Logo" />
+    </div>
+
+    <div class="title-block">
+      <h1 class="app-name">Sunlit <span>AI</span></h1>
+      <p class="app-subtitle">AI Photo Enhancer</p>
+    </div>
+
+    <p class="desc">Transform your photos into stunning visuals with next-gen AI. Be first to experience it when we launch.</p>
+
+    <!-- Horizontally scrollable template shelf -->
+    <div class="templates-outer">
+      <div class="templates">
+        <div class="card">
+          <video autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dimvx7yg5/video/upload/v1777130904/Edits_Relight_20260424_154608_siw8ft_w9u6og.mp4" type="video/mp4" />
+          </video>
+          <div class="card-overlay"><span class="card-name">Relight Photo</span></div>
+        </div>
+        <div class="card">
+          <video autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dimvx7yg5/video/upload/v1778960776/22B436EA-0364-4F23-81C7-1EFA347456EA_zinsyu.mp4" type="video/mp4" />
+          </video>
+          <div class="card-overlay"><span class="card-name">The Fog</span></div>
+        </div>
+        <div class="card">
+          <video autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dimvx7yg5/video/upload/v1777844367/B5E52D1B-E518-4C59-A9D8-D6BD443C3D9A_oxe5yf.mp4" type="video/mp4" />
+          </video>
+          <div class="card-overlay"><span class="card-name">Motion</span></div>
+        </div>
+        <div class="card">
+          <video autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dimvx7yg5/video/upload/v1777137563/74FFFAFC-FE99-4EE2-875E-973102D65EC0_rz4v7w.mp4" type="video/mp4" />
+          </video>
+          <div class="card-overlay"><span class="card-name">Oil Paint</span></div>
+        </div>
+        <div class="card">
+          <video autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dimvx7yg5/video/upload/v1777898128/4B4D7755-B762-4D4F-82F1-00C7D7856D67_qh1ndf.mp4" type="video/mp4" />
+          </video>
+          <div class="card-overlay"><span class="card-name">Hero Frame</span></div>
+        </div>
+        <div class="card">
+          <video autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dimvx7yg5/video/upload/v1777223657/366A5734-D4F4-4C6F-B409-38ED9C8F8046_hn573r.mp4" type="video/mp4" />
+          </video>
+          <div class="card-overlay"><span class="card-name">Ultra 4K</span></div>
+        </div>
+        <div class="card">
+          <video autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dimvx7yg5/video/upload/v1779297823/C1F2AB8B-E822-4121-9B1B-7D02ED6445AE_i3fc0w.mp4" type="video/mp4" />
+          </video>
+          <div class="card-overlay"><span class="card-name">Ethereal Portrait</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-wrap" id="form-section">
+      <input
+        class="email-input"
+        type="email"
+        id="email-input"
+        placeholder="Enter your email address"
+        autocomplete="email"
+        inputmode="email"
+      />
+      <button class="join-btn" id="join-btn" onclick="handleJoin()">Join Waitlist</button>
+      <p class="error-msg" id="error-msg">Please enter a valid email address.</p>
+    </div>
+
+    <!-- Success -->
+    <div class="success-wrap" id="success-section">
+      <div class="success-icon">✦</div>
+      <h3>You're on the list!</h3>
+      <p>We'll notify you the moment Sunlit AI goes live.</p>
+    </div>
+
+    <!-- Social proof -->
+    <div class="social-proof">
+      <div class="avatars">
+        <div class="avatar">A</div>
+        <div class="avatar">B</div>
+        <div class="avatar">C</div>
+        <div class="avatar">D</div>
+      </div>
+      <span id="count-text">Be among the first to join</span>
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://qbzboehigtllgwzvotfd.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiemJvZWhpZ3RsbGd3enZvdGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NzgyMDQsImV4cCI6MjA5NTA1NDIwNH0.JRVDOBLQh9Xg3Sf6AejgTnUzu2GTHYezq0PRm_WYfrE';
+
+    async function fetchCount() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=id`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'count=exact'
+          }
+        });
+        const count = parseInt(res.headers.get('content-range')?.split('/')[1] || '0');
+        if (count > 0) {
+          document.getElementById('count-text').textContent =
+            count.toLocaleString() + (count === 1 ? ' person already joined' : ' people already joined');
+        }
+      } catch (e) {}
+    }
+
+    async function handleJoin() {
+      const input = document.getElementById('email-input');
+      const btn = document.getElementById('join-btn');
+      const errMsg = document.getElementById('error-msg');
+      const email = input.value.trim();
+
+      input.classList.remove('error');
+      errMsg.style.display = 'none';
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        input.classList.add('error');
+        errMsg.style.display = 'block';
+        input.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Joining...';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email })
+        });
+
+        if (res.ok || res.status === 201) {
+          document.getElementById('form-section').style.display = 'none';
+          document.getElementById('success-section').style.display = 'flex';
+          fetchCount();
+        } else if (res.status === 409) {
+          input.classList.add('error');
+          errMsg.textContent = 'This email is already on the waitlist.';
+          errMsg.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Join Waitlist';
+        } else {
+          throw new Error('Server error');
+        }
+      } catch (e) {
+        errMsg.textContent = 'Something went wrong. Please try again.';
+        errMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Join Waitlist';
+      }
+    }
+
+    document.getElementById('email-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleJoin();
+    });
+
+    fetchCount();
+  </script>
+</body>
+</html>
